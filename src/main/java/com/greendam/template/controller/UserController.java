@@ -3,6 +3,7 @@ import com.greendam.template.common.BaseResponse;
 import com.greendam.template.model.dto.UserLoginDTO;
 import com.greendam.template.model.dto.UserRegisterDTO;
 import com.greendam.template.model.dto.UserUpdateDTO;
+import com.greendam.template.model.vo.UserLoginVO;
 import com.greendam.template.model.vo.UserVO;
 import com.greendam.template.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +37,10 @@ public class UserController {
      * @return 用户信息响应
      */
     @PostMapping("/login")
-    public BaseResponse<UserVO> login(@RequestBody UserLoginDTO userLoginDTO) {
-
-        return null;
+    public BaseResponse<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO) {
+        //使用JWT进行用户登录
+        UserLoginVO userLoginVO = userService.loginByJwt(userLoginDTO);
+        return BaseResponse.success(userLoginVO);
     }
     /**
      * 用户登出接口

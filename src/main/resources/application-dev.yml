@@ -4,7 +4,7 @@ your:
     port: 3306
     database: myDB
     username: root
-    password: 123456
+    password: 753951JcJ~
     stat-view-servlet:
       login-username: admin
       login-password: 123456
@@ -20,6 +20,15 @@ your:
     access-key-secret: XXX
     bucket-name: XXX
     endpoint: XXX
+  jwt:
+    #仅在管理端使用
+    admin-secret-key: admin
+    admin-ttl: 7200000
+    admin-token-name: token
+
+    user-secret-key: myJwt
+    user-ttl: 7200000
+    user-token-name: authentication
 knife4j:
   basic:
     enable: true

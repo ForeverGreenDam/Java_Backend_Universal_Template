@@ -38,7 +38,7 @@ spring:
 #    cluster:
 #      nodes: ${your.redis.cluster.nodes}
 mybatis:
-  mapper-locations: classpath:mappers/*.xml
+  mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.greendam.template.model.entity
   configuration:
     # 开启驼峰命名
@@ -65,6 +65,14 @@ your:
     bucket-name: ${your.alioss.bucket-name}
     endpoint: ${your.alioss.endpoint}
     access-key-secret: ${your.alioss.access-key-secret}
+  jwt:
+    admin-secret-key: ${your.jwt.admin-secret-key}
+    admin-ttl: ${your.jwt.admin-ttl}
+    admin-token-name: ${your.jwt.admin-token-name}
+    user-secret-key: ${your.jwt.user-secret-key}
+    user-ttl: ${your.jwt.user-ttl}
+    user-token-name: ${your.jwt.user-token-name}
+
 
 
 

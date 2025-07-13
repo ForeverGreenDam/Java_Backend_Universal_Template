@@ -22,4 +22,14 @@
         id,user_account,user_password,user_name,user_avatar,user_profile,
         user_role,edit_time,create_time,update_time,is_delete
     </sql>
+    <select id="select" resultType="com.greendam.template.model.entity.User">
+        SELECT * FROM user
+        where  is_delete = 0
+            <if test="id != null">AND id = #{id}</if>
+            <if test="userAccount != null">AND user_account = #{userAccount}</if>
+            <if test="userPassword != null">AND user_password = #{userPassword}</if>
+            <if test="userName != null">AND user_name LIKE concat('%', #{userName}, '%')</if>
+            <if test="userProfile != null">AND user_profile LIKE concat('%', #{userProfile}, '%')</if>
+            <if test="userRole != null">AND user_role = #{userRole}</if>
+    </select>
 </mapper>
