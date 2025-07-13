@@ -12,9 +12,14 @@ your:
     host: localhost
     port: 6379
     database: 2
-#    cluster:
-#      #使用逗号分隔开
-#      nodes: localhost:7000,localhost:7001,localhost:7002
+    #    cluster:
+    #      #使用逗号分隔开
+    #      nodes: localhost:7000,localhost:7001,localhost:7002
+  alioss:
+    access-key-id: XXX
+    access-key-secret: XXX
+    bucket-name: XXX
+    endpoint: XXX
 knife4j:
   basic:
     enable: true

@@ -59,7 +59,12 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - com.greendam.template.controller
-
+your:
+  alioss:
+    access-key-id: ${your.alioss.access-key-id}
+    bucket-name: ${your.alioss.bucket-name}
+    endpoint: ${your.alioss.endpoint}
+    access-key-secret: ${your.alioss.access-key-secret}
 
 
 
