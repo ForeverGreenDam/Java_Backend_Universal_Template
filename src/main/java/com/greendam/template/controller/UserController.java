@@ -88,8 +88,9 @@ public class UserController {
      * @return 用户信息响应
      */
     @GetMapping("/get")
-    public BaseResponse<UserVO> getUser(long id) {
+    public BaseResponse<UserVO> getUser(Long id) {
+        UserVO user = userService.getUser();
 
-        return null;
+        return BaseResponse.success(user);
     }
 }

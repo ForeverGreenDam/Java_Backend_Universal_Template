@@ -1,7 +1,7 @@
 package com.greendam.template.config;
 
-import com.greendam.template.properties.AliOssProperties;
 import com.greendam.template.common.utils.AliOssUtil;
+import com.greendam.template.properties.AliOssProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

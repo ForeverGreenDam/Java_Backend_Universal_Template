@@ -1,7 +1,6 @@
 package com.greendam.template.mapper;
 
 import com.greendam.template.model.entity.User;
-import org.apache.ibatis.annotations.Select;
 
 /**
 * @author ForeverGreenDam

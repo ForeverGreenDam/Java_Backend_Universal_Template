@@ -1,7 +1,6 @@
 package com.greendam.template.service;
 
 import com.greendam.template.model.dto.UserLoginDTO;
-import com.greendam.template.model.entity.User;
 import com.greendam.template.model.vo.UserLoginVO;
 import com.greendam.template.model.vo.UserVO;
 
