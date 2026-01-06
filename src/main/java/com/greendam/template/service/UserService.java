@@ -29,4 +29,31 @@ public interface UserService {
      * @return 用户视图对象
      */
     UserVO getUser(HttpServletRequest request);
+    /**
+     * 注册用户
+     * @param userRegisterDTO 注册 DTO
+     * @return 新建用户 ID
+     */
+    Long register(com.greendam.template.model.dto.UserRegisterDTO userRegisterDTO);
+
+    /**
+     * 删除（注销）用户（软删）
+     * @param id 要删除的用户 ID（为空则删除当前用户）
+     * @return 是否成功
+     */
+    boolean deleteUser(Long id);
+
+    /**
+     * 管理员更新用户（敏感字段可改）
+     * @param userUpdateDTO 更新 DTO
+     * @return 是否成功
+     */
+    boolean updateUser(com.greendam.template.model.dto.UserUpdateDTO userUpdateDTO);
+
+    /**
+     * 用户编辑个人信息（不允许修改敏感字段）
+     * @param userUpdateDTO 编辑 DTO
+     * @return 是否成功
+     */
+    boolean editUser(com.greendam.template.model.dto.UserUpdateDTO userUpdateDTO);
 }

@@ -1,5 +1,8 @@
 package com.greendam.template.controller;
+
 import com.greendam.template.common.BaseResponse;
+import com.greendam.template.common.context.BaseContext;
+import com.greendam.template.exception.ErrorCode;
 import com.greendam.template.model.dto.UserLoginDTO;
 import com.greendam.template.model.dto.UserRegisterDTO;
 import com.greendam.template.model.dto.UserUpdateDTO;
@@ -27,8 +30,8 @@ public class UserController {
      */
     @PostMapping("/register")
     public BaseResponse<Long> register(@RequestBody UserRegisterDTO userRegisterDTO) {
-
-        return null;
+        Long id = userService.register(userRegisterDTO);
+        return BaseResponse.success(id);
     }
 
     /**
@@ -48,7 +51,8 @@ public class UserController {
      */
     @PostMapping("/logout")
     public BaseResponse<Boolean> logout() {
-
+        // 清理当前线程上下文中的用户信息（JWT 为无状态，可同时在客户端删除 token）
+        BaseContext.removeCurrentId();
         return BaseResponse.success(true);
     }
     /**
@@ -57,8 +61,8 @@ public class UserController {
      */
     @PostMapping("/delete")
     public BaseResponse<Boolean> deleteUser() {
-
-        return BaseResponse.success(true);
+        boolean ok = userService.deleteUser(null);
+        return BaseResponse.success(ok);
     }
     /**
      * 更新用户信息接口（涉及敏感操作，仅限管理员使用）
@@ -67,8 +71,16 @@ public class UserController {
      */
     @PostMapping("/update")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-
-        return BaseResponse.success(true);
+        if (userUpdateDTO == null || userUpdateDTO.getId() == null) {
+            return BaseResponse.error(ErrorCode.PARAMS_ERROR);
+        }
+        // 权限校验：只有管理员可更新敏感信息
+        UserVO current = userService.getUser();
+        if (current == null || !com.greendam.template.constant.UserRoleConstant.ADMIN.equals(current.getUserRole())) {
+            return BaseResponse.error(com.greendam.template.exception.ErrorCode.NOT_AUTH_ERROR);
+        }
+        boolean ok = userService.updateUser(userUpdateDTO);
+        return BaseResponse.success(ok);
     }
 
     /**
@@ -78,8 +90,11 @@ public class UserController {
      */
     @PostMapping("/edit")
     public BaseResponse<Boolean> editUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-
-        return BaseResponse.success(true);
+        if (userUpdateDTO == null) {
+            return BaseResponse.error(ErrorCode.PARAMS_ERROR);
+        }
+        boolean ok = userService.editUser(userUpdateDTO);
+        return BaseResponse.success(ok);
     }
 
     /**
@@ -87,10 +102,9 @@ public class UserController {
      * @param id 用户ID
      * @return 用户信息响应
      */
-    @GetMapping("/get")
+    @GetMapping("/getInfo")
     public BaseResponse<UserVO> getUser(Long id) {
         UserVO user = userService.getUser();
-
         return BaseResponse.success(user);
     }
 }
