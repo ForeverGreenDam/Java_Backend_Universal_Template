@@ -2,8 +2,16 @@ package com.greendam.template.common.utils;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.greendam.template.common.constant.WechatMsgType;
 import com.greendam.template.common.entity.wechat.request.BaseMsg;
 import com.greendam.template.common.entity.wechat.request.TextCardMsg;
+import com.greendam.template.common.entity.wechat.request.TextMsg;
+import com.greendam.template.common.entity.wechat.request.ImageMsg;
+import com.greendam.template.common.entity.wechat.request.VoiceMsg;
+import com.greendam.template.common.entity.wechat.request.VideoMsg;
+import com.greendam.template.common.entity.wechat.request.FileMsg;
+import com.greendam.template.common.entity.wechat.request.NewsMsg;
+import com.greendam.template.common.entity.wechat.request.MarkdownMsg;
 import com.greendam.template.common.entity.wechat.response.AccessTokenResponse;
 import com.greendam.template.common.entity.wechat.response.SendMsgResponse;
 import com.greendam.template.common.properties.WechatProperties;
@@ -97,12 +105,205 @@ public class WechatUtils {
         textCardMsg.setTitle(title);
         textCardMsg.setDescription(description);
         textCardMsg.setBtntxt("详情");
+        send(toUser, WechatMsgType.TEXT_CARD, textCardMsg);
+    }
+    /**
+     * 为指定用户发送文本消息
+     * @param content 文本内容
+     * @param toUserList 接收用户列表
+     */
+    public void sendTextMsgToUsers(String content, List<Long> toUserList) {
+        sendTextMsg(content, rebuildToUserList(toUserList));
+    }
 
-        BaseMsg<TextCardMsg> baseMsg = new BaseMsg<>();
-        baseMsg.setMsgtype("textcard");
-        baseMsg.setTouser(toUser);
-        baseMsg.setReplaceName(textCardMsg);
-        baseMsg.setAgentid(wechatProperties.getAgentId());
+    /**
+     * 为所有用户发送文本消息
+     * @param content 文本内容
+     */
+    public void sendTextMsgToAll(String content) {
+        sendTextMsg(content, "@all");
+    }
+
+    /**
+     * 发送文本消息
+     * @param content 文本内容
+     * @param toUser 接收者（"@all" 或 "id1|id2"）
+     */
+    private void sendTextMsg(String content, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        TextMsg textMsg = new TextMsg();
+        textMsg.setContent(content);
+        send(toUser, WechatMsgType.TEXT, textMsg);
+    }
+
+    /**
+     * 为指定用户发送图片消息
+     * @param mediaId 媒体文件 id
+     * @param toUserList 接收用户列表
+     */
+    public void sendImageMsgToUsers(String mediaId, List<Long> toUserList) {
+        sendImageMsg(mediaId, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送图片消息
+     * @param mediaId 媒体文件 id
+     */
+    public void sendImageMsgToAll(String mediaId) {
+        sendImageMsg(mediaId, "@all");
+    }
+
+    private void sendImageMsg(String mediaId, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        ImageMsg imageMsg = new ImageMsg();
+        imageMsg.setMedia_id(mediaId);
+        send(toUser, WechatMsgType.IMAGE, imageMsg);
+    }
+
+    /**
+     * 为指定用户发送语音消息
+     * @param mediaId 媒体文件 id
+     * @param toUserList 接收用户列表
+     */
+    public void sendVoiceMsgToUsers(String mediaId, List<Long> toUserList) {
+        sendVoiceMsg(mediaId, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送语音消息
+     * @param mediaId 媒体文件 id
+     */
+    public void sendVoiceMsgToAll(String mediaId) {
+        sendVoiceMsg(mediaId, "@all");
+    }
+
+    private void sendVoiceMsg(String mediaId, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        VoiceMsg voiceMsg = new VoiceMsg();
+        voiceMsg.setMedia_id(mediaId);
+        send(toUser, WechatMsgType.VOICE, voiceMsg);
+    }
+
+    /**
+     * 为指定用户发送视频消息
+     * @param mediaId 媒体文件 id
+     * @param title 标题
+     * @param description 描述
+     * @param toUserList 接收用户列表
+     */
+    public void sendVideoMsgToUsers(String mediaId, String title, String description, List<Long> toUserList) {
+        sendVideoMsg(mediaId, title, description, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送视频消息
+     * @param mediaId 媒体文件 id
+     * @param title 标题
+     * @param description 描述
+     */
+    public void sendVideoMsgToAll(String mediaId, String title, String description) {
+        sendVideoMsg(mediaId, title, description, "@all");
+    }
+
+    private void sendVideoMsg(String mediaId, String title, String description, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        VideoMsg videoMsg = new VideoMsg();
+        videoMsg.setMedia_id(mediaId);
+        videoMsg.setTitle(title);
+        videoMsg.setDescription(description);
+        send(toUser, WechatMsgType.VIDEO, videoMsg);
+    }
+
+    /**
+     * 为指定用户发送文件消息
+     * @param mediaId 媒体文件 id
+     * @param toUserList 接收用户列表
+     */
+    public void sendFileMsgToUsers(String mediaId, List<Long> toUserList) {
+        sendFileMsg(mediaId, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送文件消息
+     * @param mediaId 媒体文件 id
+     */
+    public void sendFileMsgToAll(String mediaId) {
+        sendFileMsg(mediaId, "@all");
+    }
+
+    private void sendFileMsg(String mediaId, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        FileMsg fileMsg = new FileMsg();
+        fileMsg.setMedia_id(mediaId);
+        send(toUser, WechatMsgType.FILE, fileMsg);
+    }
+
+    /**
+     * 为指定用户发送图文消息
+     * @param news 图文消息对象
+     * @param toUserList 接收用户列表
+     */
+    public void sendNewsMsgToUsers(NewsMsg news, List<Long> toUserList) {
+        sendNewsMsg(news, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送图文消息
+     * @param news 图文消息对象
+     */
+    public void sendNewsMsgToAll(NewsMsg news) {
+        sendNewsMsg(news, "@all");
+    }
+
+    private void sendNewsMsg(NewsMsg news, String toUser) {
+        if (toUser == null || news == null) {
+            return;
+        }
+        send(toUser, WechatMsgType.NEWS, news);
+    }
+
+    /**
+     * 为指定用户发送 Markdown 消息
+     * @param content markdown 内容
+     * @param toUserList 接收用户列表
+     */
+    public void sendMarkdownMsgToUsers(String content, List<Long> toUserList) {
+        sendMarkdownMsg(content, rebuildToUserList(toUserList));
+    }
+
+    /**
+     * 为所有用户发送 Markdown 消息
+     * @param content markdown 内容
+     */
+    public void sendMarkdownMsgToAll(String content) {
+        sendMarkdownMsg(content, "@all");
+    }
+
+    private void sendMarkdownMsg(String content, String toUser) {
+        if (toUser == null) {
+            return;
+        }
+        MarkdownMsg markdownMsg = new MarkdownMsg();
+        markdownMsg.setContent(content);
+        send(toUser, WechatMsgType.MARKDOWN, markdownMsg);
+    }
+    /**
+     * 发送消息
+     * @param toUser
+     * @param msg
+     */
+    private <T>  void send(String toUser, String msgType, T msg) {
+        BaseMsg<T> baseMsg = BaseMsg.buildBaseMsg(msgType, msg, wechatProperties.getAgentId(), toUser);
         baseMsg.setSafe(0);
         String jsonWithMsgTypeKey = BaseMsg.toJsonWithMsgTypeKey(baseMsg);
 
@@ -118,6 +319,8 @@ public class WechatUtils {
             resend(baseMsg);
         }
     }
+
+
     /**
      * 重新发送消息,防止access_token提前失效
      * @param baseMsg

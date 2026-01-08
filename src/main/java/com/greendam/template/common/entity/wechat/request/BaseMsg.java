@@ -77,6 +77,15 @@ public class BaseMsg<T> {
 
         return jsonStr;
     }
+
+    public static <T> BaseMsg<T> buildBaseMsg(String msgtype, T msg, String agentid, String touser) {
+        BaseMsg<T> baseMsg = new BaseMsg<>();
+        baseMsg.setMsgtype(msgtype);
+        baseMsg.setReplaceName(msg);
+        baseMsg.setAgentid(agentid);
+        baseMsg.setTouser(touser);
+       return baseMsg;
+    }
 //    {
 //        "touser" : "UserID1|UserID2|UserID3",
 //        "toparty" : "PartyID1 | PartyID2",
