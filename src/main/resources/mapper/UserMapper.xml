@@ -22,9 +22,12 @@
         edit_time, create_time, update_time, is_delete
         FROM `user`
         <where>
-            <if test="id != null"> AND id = #{id}</if>
-            <if test="userAccount != null and userAccount != ''"> AND user_account = #{userAccount}</if>
-            <if test="isDelete != null"> AND is_delete = #{isDelete}</if>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="userAccount != null">AND user_account = #{userAccount}</if>
+            <if test="userPassword != null">AND user_password = #{userPassword}</if>
+            <if test="userName != null">AND user_name LIKE concat('%', #{userName}, '%')</if>
+            <if test="userProfile != null">AND user_profile LIKE concat('%', #{userProfile}, '%')</if>
+            <if test="userRole != null">AND user_role = #{userRole}</if>
         </where>
         LIMIT 1
     </select>
@@ -52,40 +55,5 @@
         DELETE FROM `user` WHERE id = #{id}
     </delete>
 
-</mapper>
 
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.greendam.template.mapper.UserMapper">
-
-    <resultMap id="BaseResultMap" type="com.greendam.template.model.entity.User">
-            <id property="id" column="id" />
-            <result property="userAccount" column="user_account" />
-            <result property="userPassword" column="user_password" />
-            <result property="userName" column="user_name" />
-            <result property="userAvatar" column="user_avatar" />
-            <result property="userProfile" column="user_profile" />
-            <result property="userRole" column="user_role" />
-            <result property="editTime" column="edit_time" />
-            <result property="createTime" column="create_time" />
-            <result property="updateTime" column="update_time" />
-            <result property="isDelete" column="is_delete" />
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,user_account,user_password,user_name,user_avatar,user_profile,
-        user_role,edit_time,create_time,update_time,is_delete
-    </sql>
-    <select id="select" resultType="com.greendam.template.model.entity.User">
-        SELECT * FROM user
-        where  is_delete = 0
-            <if test="id != null">AND id = #{id}</if>
-            <if test="userAccount != null">AND user_account = #{userAccount}</if>
-            <if test="userPassword != null">AND user_password = #{userPassword}</if>
-            <if test="userName != null">AND user_name LIKE concat('%', #{userName}, '%')</if>
-            <if test="userProfile != null">AND user_profile LIKE concat('%', #{userProfile}, '%')</if>
-            <if test="userRole != null">AND user_role = #{userRole}</if>
-    </select>
 </mapper>

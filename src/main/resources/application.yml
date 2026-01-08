@@ -9,9 +9,6 @@ server:
         max-age: 1800 # 30 minutes  in seconds
 # 数据源配置
 spring:
-  profiles:
-    #使用dev环境配置，需要创建 application-dev.yml 文件
-    active: dev
   session:
     # 使用Redis作为Session存储
     store-type: redis
@@ -34,6 +31,7 @@ spring:
     host: ${your.redis.host}
     port: ${your.redis.port}
     database: ${your.redis.database}
+    password: ${your.redis.password}
 #    redis分片集群配置
 #    cluster:
 #      nodes: ${your.redis.cluster.nodes}
