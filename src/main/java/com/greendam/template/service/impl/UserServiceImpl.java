@@ -2,24 +2,23 @@ package com.greendam.template.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.greendam.template.common.context.BaseContext;
+import com.greendam.template.common.properties.JwtProperties;
 import com.greendam.template.common.utils.JwtUtil;
 import com.greendam.template.common.utils.PasswordUtils;
 import com.greendam.template.common.utils.ThrowUtils;
 import com.greendam.template.constant.ErrorConstant;
 import com.greendam.template.constant.JwtClaimsConstant;
+import com.greendam.template.constant.UserRoleConstant;
 import com.greendam.template.exception.ErrorCode;
 import com.greendam.template.mapper.UserMapper;
 import com.greendam.template.model.dto.UserLoginDTO;
+import com.greendam.template.model.dto.UserRegisterDTO;
+import com.greendam.template.model.dto.UserUpdateDTO;
 import com.greendam.template.model.entity.User;
 import com.greendam.template.model.vo.UserLoginVO;
 import com.greendam.template.model.vo.UserVO;
-import com.greendam.template.model.dto.UserRegisterDTO;
-import com.greendam.template.model.dto.UserUpdateDTO;
-import com.greendam.template.constant.UserRoleConstant;
-import com.greendam.template.properties.JwtProperties;
 import com.greendam.template.service.UserService;
 import org.springframework.stereotype.Service;
- 
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;

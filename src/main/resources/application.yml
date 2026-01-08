@@ -72,6 +72,10 @@ your:
     user-secret-key: ${your.jwt.user-secret-key}
     user-ttl: ${your.jwt.user-ttl}
     user-token-name: ${your.jwt.user-token-name}
+  wechat:
+    agent-id: ${your.wechat.agent-id}
+    secret: ${your.wechat.secret}
+    corpid: ${your.wechat.corpid}
 
 
 

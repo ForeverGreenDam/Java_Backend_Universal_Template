@@ -1,4 +1,4 @@
-package com.greendam.template.config;
+package com.greendam.template.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

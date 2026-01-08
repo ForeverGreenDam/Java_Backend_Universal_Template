@@ -29,11 +29,16 @@ your:
     user-secret-key: myJwt
     user-ttl: 7200000
     user-token-name: authentication
+  wechat:
+    agent-id: 123456
+    secret:  XXX
+    corpid: XXX
 knife4j:
   basic:
     enable: true
     username: admin
     password: 123456
+
 
 
 

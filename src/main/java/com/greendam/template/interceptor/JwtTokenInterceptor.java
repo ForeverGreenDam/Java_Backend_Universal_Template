@@ -2,9 +2,9 @@ package com.greendam.template.interceptor;
 
 
 import com.greendam.template.common.context.BaseContext;
+import com.greendam.template.common.properties.JwtProperties;
 import com.greendam.template.common.utils.JwtUtil;
 import com.greendam.template.constant.JwtClaimsConstant;
-import com.greendam.template.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

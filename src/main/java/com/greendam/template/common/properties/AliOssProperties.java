@@ -1,4 +1,4 @@
-package com.greendam.template.properties;
+package com.greendam.template.common.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

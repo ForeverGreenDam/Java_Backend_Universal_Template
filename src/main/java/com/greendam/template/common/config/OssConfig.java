@@ -1,7 +1,7 @@
-package com.greendam.template.config;
+package com.greendam.template.common.config;
 
+import com.greendam.template.common.properties.AliOssProperties;
 import com.greendam.template.common.utils.AliOssUtil;
-import com.greendam.template.properties.AliOssProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @Slf4j
-public class OssConfiguration {
+public class OssConfig {
 
     @Bean
     @ConditionalOnMissingBean //确保只有一个AliOssUtil实例

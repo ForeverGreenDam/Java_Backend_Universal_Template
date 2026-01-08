@@ -1,4 +1,4 @@
-package com.greendam.template.config;
+package com.greendam.template.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

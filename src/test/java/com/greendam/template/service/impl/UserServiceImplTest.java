@@ -1,11 +1,11 @@
 package com.greendam.template.service.impl;
 
 import com.greendam.template.common.context.BaseContext;
+import com.greendam.template.common.properties.JwtProperties;
 import com.greendam.template.mapper.UserMapper;
 import com.greendam.template.model.dto.UserRegisterDTO;
 import com.greendam.template.model.dto.UserUpdateDTO;
 import com.greendam.template.model.entity.User;
-import com.greendam.template.properties.JwtProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
