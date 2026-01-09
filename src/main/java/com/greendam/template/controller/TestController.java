@@ -2,14 +2,12 @@ package com.greendam.template.controller;
 
 import com.greendam.template.common.BaseResponse;
 import com.greendam.template.common.utils.WechatUtils;
-import com.greendam.template.common.entity.wechat.request.NewsMsg;
-import com.greendam.template.common.entity.wechat.request.NewsArticle;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.greendam.template.service.FileService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
@@ -24,6 +22,9 @@ public class TestController {
 
     @Resource
     private WechatUtils  wechatUtils;
+
+    @Resource
+    private FileService fileService;
 
     /**
      * 发送文本卡片消息给所有用户
@@ -89,5 +90,21 @@ public class TestController {
     public BaseResponse<Void> sendMarkdownMsgToAll() {
         wechatUtils.sendMarkdownMsgToAll("# 测试标题\n这是 Markdown 内容");
         return BaseResponse.success();
+    }
+
+    /**
+     * 上传临时素材文件（测试接口）
+     * @param file 上传的文件
+     * @param type 文件类型：image/voice/video/file
+     * @return 返回 media_id
+     */
+    @PostMapping("/wechat/upload")
+    public BaseResponse<String> uploadFile(MultipartFile file, String type) {
+        try {
+            String mediaId = fileService.uploadWechatTempFile(file, type);
+            return BaseResponse.success(mediaId);
+        } catch (Exception e) {
+            return BaseResponse.error(500, "上传失败：" + e.getMessage());
+        }
     }
 }

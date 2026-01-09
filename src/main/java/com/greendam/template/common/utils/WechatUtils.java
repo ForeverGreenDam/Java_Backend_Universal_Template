@@ -2,6 +2,11 @@ package com.greendam.template.common.utils;
 
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.greendam.template.common.entity.wechat.response.UploadMediaResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import com.greendam.template.common.constant.WechatMsgType;
 import com.greendam.template.common.entity.wechat.request.BaseMsg;
 import com.greendam.template.common.entity.wechat.request.TextCardMsg;
@@ -21,6 +26,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
 import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 
 
 @AllArgsConstructor
@@ -297,6 +306,115 @@ public class WechatUtils {
         markdownMsg.setContent(content);
         send(toUser, WechatMsgType.MARKDOWN, markdownMsg);
     }
+
+    public String uploadFile(){
+        throw new UnsupportedOperationException("use uploadFile(File file, String type) or uploadFile(byte[] fileBytes, String filename, String type)");
+    }
+    /**
+     * 上传临时素材（文件形式）
+     * @param file 本地文件
+     * @param type 媒体类型：image/voice/video/file
+     * @return 返回 media_id
+     */
+    public String uploadFile(File file, String type){
+        if (file == null || !file.exists()){
+            throw new BusinessException(400, "file not found");
+        }
+        try {
+            byte[] bytes = Files.readAllBytes(file.toPath());
+            return uploadFile(bytes, file.getName(), type);
+        } catch (IOException e) {
+            throw new BusinessException(500, e.getMessage());
+        }
+    }
+
+    /**
+     * 上传临时素材（字节数组）
+     * @param fileBytes 文件内容字节
+     * @param filename 文件名（用于展示）
+     * @param type 媒体类型：image/voice/video/file
+     * @return 返回 media_id
+     */
+    public String uploadFile(byte[] fileBytes, String filename, String type){
+        if (fileBytes == null || fileBytes.length <= 5){
+            throw new BusinessException(400, "file size must be greater than 5 bytes");
+        }
+        String accessToken = getAccessToken();
+        String api = "https://qyapi.weixin.qq.com/cgi-bin/media/upload?access_token=" + accessToken + "&type=" + type;
+
+        BusinessException lastException;
+        {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(api);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setUseCaches(false);
+                connection.setConnectTimeout(60000);
+                connection.setReadTimeout(60000);
+
+                String boundary = "----WebKitFormBoundary" + System.currentTimeMillis();
+                String LINE_FEED = "\r\n";
+
+                StringBuilder headerBuilder = new StringBuilder();
+                headerBuilder.append("--").append(boundary).append(LINE_FEED);
+                headerBuilder.append("Content-Disposition: form-data; name=\"media\"; filename=\"")
+                        .append(filename).append("\"; filelength=").append(fileBytes.length).append(LINE_FEED);
+                headerBuilder.append("Content-Type: application/octet-stream").append(LINE_FEED).append(LINE_FEED);
+
+                byte[] headerBytes = headerBuilder.toString().getBytes(StandardCharsets.UTF_8);
+                byte[] footerBytes = (LINE_FEED + "--" + boundary + "--" + LINE_FEED).getBytes(StandardCharsets.UTF_8);
+
+                int contentLength = headerBytes.length + fileBytes.length + footerBytes.length;
+
+                connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+                connection.setRequestProperty("Connection", "Keep-Alive");
+                connection.setRequestProperty("Charset", "UTF-8");
+                connection.setRequestProperty("Content-Length", String.valueOf(contentLength));
+
+                try (OutputStream outputStream = connection.getOutputStream()) {
+                    outputStream.write(headerBytes);
+                    outputStream.write(fileBytes);
+                    outputStream.write(footerBytes);
+                    outputStream.flush();
+                }
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == 200) {
+                    try (java.io.InputStream inputStream = connection.getInputStream();
+                         ByteArrayOutputStream responseStream = new ByteArrayOutputStream()) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = inputStream.read(buffer)) != -1) {
+                            responseStream.write(buffer, 0, len);
+                        }
+                        String response = responseStream.toString("UTF-8");
+
+                        UploadMediaResponse uploadResponse = JSONUtil.parseObj(response).toBean(UploadMediaResponse.class);
+                        String errcode = uploadResponse.getErrcode();
+                        if (!"0".equals(errcode)) {
+                            lastException = new BusinessException(500, uploadResponse.getErrmsg());
+                        } else {
+                            return uploadResponse.getMedia_id();
+                        }
+                    }
+                } else {
+                    lastException = new BusinessException(500, "HTTP请求失败，响应码：" + responseCode);
+                }
+
+            } catch (IOException e) {
+                lastException = new BusinessException(500, "multipart 上传失败：" + e.getMessage());
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        }
+        throw lastException;
+    }
+
     /**
      * 发送消息
      * @param toUser

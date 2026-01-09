@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.greendam.template.mapper.TempFileMapper">
+
+    <resultMap id="BaseResultMap" type="com.greendam.template.model.entity.TempFile">
+        <id column="id" property="id"/>
+        <result column="media_id" property="mediaId"/>
+        <result column="file_name" property="fileName"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="file_type" property="fileType"/>
+        <result column="upload_time" property="uploadTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_delete" property="isDelete"/>
+    </resultMap>
+
+    <select id="select" parameterType="com.greendam.template.model.entity.TempFile" resultMap="BaseResultMap">
+        SELECT
+        id, media_id, file_name, file_size, file_type, upload_time, create_time, update_time, is_delete
+        FROM `temp_file`
+        <where>
+            <if test="id != null">AND id = #{id}</if>
+            <if test="mediaId != null">AND media_id = #{mediaId}</if>
+            <if test="fileName != null">AND file_name LIKE concat('%', #{fileName}, '%')</if>
+            <if test="fileType != null">AND file_type = #{fileType}</if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.greendam.template.model.entity.TempFile" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `temp_file` (media_id, file_name, file_size, file_type, upload_time, is_delete)
+        VALUES (#{mediaId}, #{fileName}, #{fileSize}, #{fileType}, #{uploadTime}, #{isDelete})
+    </insert>
+
+    <update id="update" parameterType="com.greendam.template.model.entity.TempFile">
+        UPDATE `temp_file`
+        <set>
+            <if test="mediaId != null"> media_id = #{mediaId},</if>
+            <if test="fileName != null"> file_name = #{fileName},</if>
+            <if test="fileSize != null"> file_size = #{fileSize},</if>
+            <if test="fileType != null"> file_type = #{fileType},</if>
+            <if test="uploadTime != null"> upload_time = #{uploadTime},</if>
+            <if test="isDelete != null"> is_delete = #{isDelete},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM `temp_file` WHERE id = #{id}
+    </delete>
+
+</mapper>
+
+

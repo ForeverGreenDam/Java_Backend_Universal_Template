@@ -19,3 +19,19 @@ create table if not exists user
     UNIQUE KEY uk_userAccount (user_account),
     INDEX idx_userName (user_name)
 ) comment '用户' collate = utf8mb4_unicode_ci;
+
+-- 临时素材表
+create table if not exists temp_file
+(
+    id           bigint auto_increment comment 'id' primary key,
+    media_id     varchar(256)                          not null comment '微信媒体ID',
+    file_name    varchar(512)                          not null comment '文件名',
+    file_size    bigint                                 not null comment '文件大小（字节）',
+    file_type    varchar(128)                           null comment '文件类型/媒体类型（image/voice/video/file）',
+    upload_time  datetime     default CURRENT_TIMESTAMP not null comment '上传时间',
+    create_time  datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    update_time  datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    is_delete    tinyint      default 0                 not null comment '是否删除',
+    UNIQUE KEY uk_mediaId (media_id),
+    INDEX idx_fileName (file_name)
+) comment '临时素材表' collate = utf8mb4_unicode_ci;
