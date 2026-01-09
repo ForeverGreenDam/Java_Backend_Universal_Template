@@ -58,3 +58,37 @@
 ## 贡献与作者
 作者：ForeverGreenDam  
 欢迎提交 issue 或 PR 来改进模板功能与示例。
+
+## 微信临时素材上传（新增）
+
+本模板新增了企业微信临时素材上传的完整实现（含数据库记录），相关文件：
+- 工具类（仅负责对接微信 API）: `src/main/java/com/greendam/template/common/utils/WechatUtils.java`
+- 服务层（负责业务逻辑与持久化）: `src/main/java/com/greendam/template/service/FileService.java` 和 `src/main/java/com/greendam/template/service/impl/FileServiceImpl.java`
+- 数据库表：`temp_file`（见 `sql/createtable.sql`）
+- 实体：`src/main/java/com/greendam/template/model/entity/TempFile.java`
+- Mapper：`src/main/java/com/greendam/template/mapper/TempFileMapper.java` 与 `src/main/resources/mapper/TempFileMapper.xml`
+- 微信 API 响应实体：`src/main/java/com/greendam/template/common/entity/wechat/response/UploadMediaResponse.java`
+
+功能点与使用说明：
+- 上传接口会先通过 `WechatUtils` 调用企业微信 `media/upload` 接口获取 `media_id`，成功后由 `FileServiceImpl` 将 `media_id`、文件名、大小、类型和上传时间写入 `temp_file` 表。
+- 支持通过 `MultipartFile` 直接上传（控制器示例：`TestController.uploadFile`），也支持按 UTF-8 编码上传纯文本内容（`FileService.uploadWechatTempTextFile`）。
+- `media_id` 在企业微信中**仅三天有效**，请在业务中注意过期处理或按需重新上传。
+
+示例（Controller 调用示例）：
+
+```java
+@PostMapping("/wechat/upload")
+public BaseResponse<String> uploadFile(MultipartFile file, String type) {
+    String mediaId = fileService.uploadWechatTempFile(file, type);
+    return BaseResponse.success(mediaId);
+}
+```
+
+配置与注意：
+- 请在 `application.yml` 中配置 `your.wechat` 前缀下的 `corpid`、`secret`、`agentId`（对应 `WechatProperties`）。
+- 需要启用并配置 Redis（用于缓存 access_token），示例配置见 `src/main/resources/application.yml`。
+- 数据库中已包含 `temp_file` 建表语句（`sql/createtable.sql`），请在部署前执行建表。
+
+调试与日志：
+- 上传失败时会抛出 `BusinessException`，请查看服务日志以获取微信返回的错误码与信息（例如 `empty media data` 或 `44001` 等）。
+- 若遇到微信接口返回格式或上传失败的问题，可检查 HTTP 请求的 multipart 边界、Content-Disposition 中 `filename` 与 `filelength` 字段是否正确。
